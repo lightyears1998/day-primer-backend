@@ -1,0 +1,13 @@
+{
+    "version": "0.1",
+    "allowCompoundWords": true,
+    "words": [
+        "airbnb",
+        "dbaeumer",
+        "esnext",
+        "qfstudio",
+        "tslib",
+        "typedi",
+        "typeorm"
+    ]
+}
