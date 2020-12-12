@@ -23,7 +23,6 @@ import { genSecret, redis } from "./utils";
 import { authChecker } from "./auth/AuthChecker";
 import { appUserContextMiddleware } from "./auth/AppUserContextMiddleware";
 import { setupUserContext } from "./context";
-import { RoleService } from "./service/RoleService";
 
 async function setupDatabase(): Promise<void> {
   const dbPath = path.join(APP_VAR_DIR, "./database.sqlite3");
@@ -39,8 +38,6 @@ async function setupDatabase(): Promise<void> {
     logging: "all",
     entities: [`${__dirname}/entity/**/*.{ts,js}`]
   });
-
-  await Container.get(RoleService).init();
 }
 
 async function setupGraphQLSchema(): Promise<GraphQLSchema> {
@@ -115,7 +112,7 @@ async function bootstrap() {
   const server = await setupApolloServer(schema);
   const app = await setupKoa(server);
 
-  await new Promise((resolve) => {
+  await new Promise<void>((resolve) => {
     app.listen({ host: "localhost", port: APP_PORT }, resolve);
   });
 

@@ -6,10 +6,9 @@ import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { ApolloError } from "apollo-server";
 
-import { Ledger, User } from "../../entity";
+import { User } from "../../entity";
 import { AppContext, AppUserContext } from "../../context";
 import { UserRepository } from "../../repo";
-import { LedgerRepository } from "../../repo/LegerRepository";
 
 @Service()
 @Resolver(() => User)
@@ -17,31 +16,9 @@ export class UserResolver implements ResolverInterface<User> {
   @InjectRepository()
   private readonly userRepository!: UserRepository
 
-  @InjectRepository()
-  private readonly ledgerRepository!: LedgerRepository
-
-  @FieldResolver({
-    complexity: ({ args, childComplexity }) => {
-      return 1 + childComplexity * (args.take ?? 0);
-    }
-  })
-  async ledgers(
-    @Root() user: User,
-    @Arg("skip", () => Int, { nullable: true, defaultValue: 0 }) skip: number,
-    @Arg("take", () => Int, { nullable: true, defaultValue: 20 }) take: number
-  ): Promise<Ledger[]> {
-    return this.ledgerRepository.find({
-      where: { owner: user },
-      skip: skip,
-      take: take
-    });
-  }
-
-  @FieldResolver(() => Int)
-  async ledgerCount(
-    @Root() user: User,
-  ): Promise<number> {
-    return this.ledgerRepository.count({ where: { owner: user } });
+  @Query(() => String)
+  userId(@Root() user: User): number {
+    return user.userId;
   }
 
   @Authorized()

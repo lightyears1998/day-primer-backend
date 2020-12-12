@@ -11,9 +11,7 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { AppUserContext } from "../../context";
-import {
-  RoleName, Server, ServerAnnouncement
-} from "../../entity";
+import { Server, ServerAnnouncement } from "../../entity";
 
 @Service()
 @Resolver(() => Server)
@@ -40,21 +38,5 @@ export class ServerResolver implements ResolverInterface<Server> {
   @Query(() => Server)
   async server(): Promise<Server> {
     return new Server();
-  }
-
-  @Authorized([RoleName.SERVER_ADMIN])
-  @Mutation(() => ServerAnnouncement)
-  async addServerAnnouncement(
-    @Ctx() ctx: AppUserContext,
-    @Arg("title") title: string,
-    @Arg("content") content: string
-  ): Promise<ServerAnnouncement> {
-    const announcement = this.announcementRepository.create({
-      title,
-      by: ctx.getSessionUser(),
-      content
-    });
-
-    return this.announcementRepository.save(announcement);
   }
 }
