@@ -1,9 +1,11 @@
 import {
-  Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn
+  Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn
 } from "typeorm";
 import {
   Field, ID, ObjectType
 } from "type-graphql";
+
+import { Project } from "./Project";
 
 @ObjectType()
 @Entity()
@@ -20,9 +22,15 @@ export class User {
   @Column()
   passwordHash!: string
 
+  @Field(() => [Project])
+  @OneToMany(() => Project, project => project.owner)
+  projects?: Project[]
+
+  @Field(() => Date)
   @CreateDateColumn()
   createdAt!: Date
 
+  @Field(() => Date)
   @UpdateDateColumn()
   updatedAt!: Date
 }

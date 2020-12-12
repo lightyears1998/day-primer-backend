@@ -6,16 +6,20 @@ import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { ApolloError } from "apollo-server";
 
-import { User } from "../../entity";
+import { Action, User } from "../../entity";
 import { AppContext, AppUserContext } from "../../context";
 import { UserRepository } from "../../repo";
 import { Project } from "../../entity/Project";
+import { ProjectRepository } from "../../repo/ProjectRepository";
 
 @Service()
-@Resolver(() => User)
-export class UserResolver implements ResolverInterface<User> {
+@Resolver(() => Action)
+export class ActionResolver implements ResolverInterface<Action> {
   @InjectRepository()
   private readonly userRepository!: UserRepository
+
+  @InjectRepository()
+  private readonly projectRepository!: ProjectRepository
 
   @FieldResolver(() => [Project])
   async projects(@Root() user: User): Promise<Project[]> {

@@ -1,16 +1,12 @@
 import os from "os";
 
 import {
-  Arg,
-  Authorized,
-  Ctx,
-  FieldResolver, Mutation, Query, Resolver, ResolverInterface
+  FieldResolver, Query, Resolver, ResolverInterface
 } from "type-graphql";
 import { Service } from "typedi";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import { AppUserContext } from "../../context";
 import { Server, ServerAnnouncement } from "../../entity";
 
 @Service()
