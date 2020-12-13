@@ -2,11 +2,13 @@ import { ApolloError } from "apollo-server";
 import {
   MiddlewareFn, NextFn, ResolverData
 } from "type-graphql";
+import Container from "typedi";
 import { getCustomRepository } from "typeorm";
 
 import { AppContext, AppUserContext } from "../../context";
 import { Project, User } from "../../entity";
 import { ProjectRepository } from "../../repo";
+import { ProjectService } from "../../service/ProjectService";
 
 type ProjectGuardArgs = {
   argKey?: string
@@ -30,9 +32,8 @@ export function ContextProjectAccessible({ ctxKey = "project" }: Omit<ProjectGua
   return async ({ context }: ResolverData<AppUserContext>, next: NextFn) => {
     const user = context.getSessionUser() as User;
     const project = context.state[ctxKey] as Project;
-    const projectOwner = await getCustomRepository(ProjectRepository).loadOwner(project);
 
-    if (projectOwner.userId !== user.userId) {
+    if (!(await Container.get(ProjectService).accessibleBy(project, user))) {
       throw new ApolloError("Project 不可访问。");
     }
 

@@ -1,91 +1,68 @@
-import bcrypt from "bcrypt";
 import {
-  Query, Resolver, Ctx, Mutation, Arg, Int, Authorized, FieldResolver, ResolverInterface, Root
+  Resolver, Ctx, Mutation, Arg, Authorized, FieldResolver, ResolverInterface, Root, UseMiddleware, ID
 } from "type-graphql";
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
-import { ApolloError } from "apollo-server";
 
-import { Action, User } from "../../entity";
-import { AppContext, AppUserContext } from "../../context";
-import { UserRepository } from "../../repo";
-import { Project } from "../../entity/Project";
-import { ProjectRepository } from "../../repo/ProjectRepository";
+import { Action } from "../../entity";
+import { AppUserContext } from "../../context";
+import { ActionRepository } from "../../repo";
+import { Project } from "../../entity";
+import { ContextProjectAccessible, LoadProjectIntoContext } from "../Project";
+
+import { AddActionInput } from "./param";
+import { ContextActionAccessible, LoadActionIntoContext } from "./ActionGuard";
+import { UpdateActionInput } from "./param/UpdateActionInput";
 
 @Service()
 @Resolver(() => Action)
 export class ActionResolver implements ResolverInterface<Action> {
   @InjectRepository()
-  private readonly userRepository!: UserRepository
+  private readonly actionRepository!: ActionRepository
 
-  @InjectRepository()
-  private readonly projectRepository!: ProjectRepository
-
-  @FieldResolver(() => [Project])
-  async projects(@Root() user: User): Promise<Project[]> {
-    if (!user.projects) {
-      user.projects = await this.userRepository.loadProjects(user);
+  @FieldResolver(() => Project)
+  async project(@Root() action: Action): Promise<Project> {
+    if (!action.project) {
+      action.project = await this.actionRepository.loadProject(action);
     }
 
-    return user.projects;
+    return action.project;
   }
 
   @Authorized()
-  @Query(() => [User], {
-    complexity: ({ args, childComplexity }) => {
-      return 1 + childComplexity * (args.take ?? 0);
-    }
-  })
-  async users(
-    @Arg("skip", () => Int, { nullable: true, defaultValue: 0 }) skip?: number,
-    @Arg("take", () => Int, { nullable: true, defaultValue: 20 }) take?: number
-  ): Promise<User[]> {
-    const users = this.userRepository.find({ skip, take });
-    return users;
+  @UseMiddleware(
+    LoadProjectIntoContext({ argKey: "projectId", ctxKey: "project" }),
+    ContextProjectAccessible({ ctxKey: "project" })
+  )
+  @Mutation(() => Action)
+  async addAction(@Ctx() ctx: AppUserContext, @Arg("projectId") _projectId: string, @Arg("data") data: AddActionInput): Promise<Action> {
+    const project = ctx.state.project as Project;
+    const action = this.actionRepository.create({ project, ...data });
+    return this.actionRepository.save(action);
   }
 
-  @Query(() => User, { nullable: true })
-  async me(@Ctx() ctx: AppUserContext): Promise<User | undefined> {
-    return ctx.getSessionUser();
+  @Authorized()
+  @UseMiddleware(
+    LoadActionIntoContext({ argKey: "actionId", ctxKey: "action" }),
+    ContextActionAccessible({ ctxKey: "action" })
+  )
+  @Mutation(() => Action)
+  async updateAction(@Ctx() ctx: AppUserContext, @Arg("actionId") _actionId: string, @Arg("data") data: UpdateActionInput): Promise<Action> {
+    const action = ctx.state.action as Project;
+    Object.assign(action, data);
+    return this.actionRepository.save(action);
   }
 
-  @Query(() => Boolean)
-  async existUsername(username: string): Promise<boolean> {
-    return (await this.userRepository.findByUsername(username)) !== undefined;
-  }
-
-  @Mutation(() => User)
-  async signUp(
-    @Arg("username") username: string,
-    @Arg("password") password: string
-  ): Promise<User> {
-    const passwordHash = await bcrypt.hash(password, await bcrypt.genSalt());
-
-    const user = this.userRepository.save(this.userRepository.create({
-      username,
-      passwordHash
-    }));
-
-    return user;
-  }
-
-  @Mutation(() => User, { nullable: true })
-  async signIn(@Arg("username") username: string, @Arg("password") password: string, @Ctx() ctx: AppContext): Promise<User | null> {
-    const user = await this.userRepository.findOneOrFail({ username });
-    const passwordMatched = await bcrypt.compare(password, user.passwordHash);
-    if (!passwordMatched) {
-      throw new ApolloError("用户名或密码错误。", "WRONG_USERNAME_OR_PASSWORD");
-    }
-
-    if (ctx.session) {
-      ctx.session.userId = user.userId;
-    }
-    return user;
-  }
-
-  @Mutation(() => Boolean)
-  async signOut(@Ctx() ctx: AppContext): Promise<boolean> {
-    ctx.session = null;
-    return true;
+  @Authorized()
+  @UseMiddleware(
+    LoadActionIntoContext({ argKey: "actionId", ctxKey: "action" }),
+    ContextActionAccessible({ ctxKey: "action" })
+  )
+  @Mutation(() => ID, { nullable: true })
+  async removeAction(@Ctx() ctx: AppUserContext, @Arg("actionId", () => ID) _actionId: string): Promise<string> {
+    const action = ctx.state.action as Action;
+    const actionId = action.actionId;
+    await this.actionRepository.remove(action);
+    return actionId;
   }
 }
