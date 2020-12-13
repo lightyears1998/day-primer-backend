@@ -23,7 +23,11 @@ export class Action {
   name!: string
 
   @Field()
-  @Column()
+  @Column({ default: "" })
+  description!: string
+
+  @Field()
+  @Column({ default: false })
   isDone!: boolean
 
   @Field()
