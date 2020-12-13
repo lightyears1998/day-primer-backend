@@ -1,12 +1,11 @@
 import {
-  Resolver, Ctx, Mutation, Arg, Authorized, FieldResolver, ResolverInterface, Root, ID, Args, UseMiddleware
+  Resolver, Ctx, Mutation, Arg, Authorized, FieldResolver, ResolverInterface, Root, ID, Args, UseMiddleware, Query
 } from "type-graphql";
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import { User } from "../../entity";
+import { Action, User } from "../../entity";
 import { AppUserContext } from "../../context";
-import { UserRepository } from "../../repo";
 import { Project } from "../../entity/Project";
 import { ProjectRepository } from "../../repo/ProjectRepository";
 
@@ -18,14 +17,16 @@ import { UpdateProjectArgs } from "./UpdateProjectArgs";
 @Resolver(() => Project)
 export class ProjectResolver implements ResolverInterface<Project> {
   @InjectRepository()
-  private readonly userRepository!: UserRepository
-
-  @InjectRepository()
   private readonly projectRepository!: ProjectRepository
 
   @FieldResolver()
   async owner(@Root() project: Project): Promise<User> {
     return this.projectRepository.loadOwner(project);
+  }
+
+  @FieldResolver(() => [Action])
+  async actions(@Root() project: Project): Promise<Action[]> {
+    return this.projectRepository.loadActions(project);
   }
 
   @Authorized()

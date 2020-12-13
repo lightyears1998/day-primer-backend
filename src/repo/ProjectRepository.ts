@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 import { EntityRepository, Repository } from "typeorm";
 
-import { User } from "../entity";
+import { Action, User } from "../entity";
 import { Project } from "../entity/Project";
 
 @Service()
@@ -17,5 +17,13 @@ export class ProjectRepository extends Repository<Project> {
     }
 
     return project.owner;
+  }
+
+  async loadActions(project: Project): Promise<Action[]> {
+    if (!project.actions) {
+      project.actions = (await this.createQueryBuilder().relation(Project, "actions").of(project).loadMany()) as Action[];
+    }
+
+    return project.actions;
   }
 }
