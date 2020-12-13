@@ -9,9 +9,9 @@ import { AppUserContext } from "../../context";
 import { Project } from "../../entity/Project";
 import { ProjectRepository } from "../../repo/ProjectRepository";
 
-import { AddProjectArgs } from "./AddProjectArgs";
+import { AddProjectInput } from "./param/AddProjectInput";
 import { ContextProjectAccessible, LoadProjectIntoContext } from "./ProjectGuard";
-import { UpdateProjectArgs } from "./UpdateProjectArgs";
+import { UpdateProjectInput } from "./param/UpdateProjectInput";
 
 @Service()
 @Resolver(() => Project)
@@ -31,9 +31,9 @@ export class ProjectResolver implements ResolverInterface<Project> {
 
   @Authorized()
   @Mutation(() => Project)
-  async addProject(@Ctx() ctx: AppUserContext, @Args() { name } : AddProjectArgs): Promise<Project> {
+  async addProject(@Ctx() ctx: AppUserContext, @Arg("data") data: AddProjectInput): Promise<Project> {
     const user = ctx.getSessionUser();
-    const project = this.projectRepository.create({ owner: user, name });
+    const project = this.projectRepository.create({ owner: user, ...data });
     return this.projectRepository.save(project);
   }
 
@@ -43,9 +43,9 @@ export class ProjectResolver implements ResolverInterface<Project> {
     ContextProjectAccessible({ ctxKey: "project" })
   )
   @Mutation(() => Project)
-  async updateProject(@Ctx() ctx: AppUserContext, @Args() args: UpdateProjectArgs): Promise<Project> {
+  async updateProject(@Ctx() ctx: AppUserContext, @Arg("projectId") _projectId: string, @Arg("data") data: UpdateProjectInput): Promise<Project> {
     const project = ctx.state.project as Project;
-    Object.assign(project, args);
+    Object.assign(project, data);
     return this.projectRepository.save(project);
   }
 
