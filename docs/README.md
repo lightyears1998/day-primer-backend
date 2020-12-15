@@ -10,6 +10,10 @@
 - typegraphql
 - typeorm
 
+### 数据库选择
+
+- Sqlite 是个轻量级的数据库，但它不支持本项目大量依赖的日期操作的比较操作。
+
 ## Apollo TypeGraph Playground
 
 使用 Cookies 时，需要设置 `"request.credentials": "include"`。
