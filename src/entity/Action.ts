@@ -6,6 +6,7 @@ import {
 } from "typeorm";
 
 import { Project } from "./Project";
+import { TimeSpan } from "./TimeSpan";
 
 @ObjectType()
 @Entity()
@@ -30,21 +31,13 @@ export class Action {
   @Column({ default: false })
   isDone!: boolean
 
-  @Field()
-  @Column({ nullable: true })
-  plannedStart?: Date
+  @Field(() => TimeSpan)
+  @Column(() => TimeSpan)
+  planned!: TimeSpan
 
-  @Field()
-  @Column({ nullable: true })
-  plannedEnd?: Date
-
-  @Field()
-  @Column({ nullable: true })
-  actualStart?: Date
-
-  @Field()
-  @Column({ nullable: true })
-  actualEnd?: Date
+  @Field(() => TimeSpan)
+  @Column(() => TimeSpan)
+  actual!: TimeSpan
 
   @Field()
   @CreateDateColumn()
