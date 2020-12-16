@@ -6,6 +6,7 @@ import {
 } from "type-graphql";
 
 import { Project } from "./Project";
+import { Journal } from "./Journal";
 
 @ObjectType()
 @Entity()
@@ -21,6 +22,10 @@ export class User {
 
   @Column()
   passwordHash!: string
+
+  @Field(() => [Journal])
+  @OneToMany(() => Journal, journal => journal.owner)
+  journals?: Journal[]
 
   @Field(() => [Project])
   @OneToMany(() => Project, project => project.owner)
