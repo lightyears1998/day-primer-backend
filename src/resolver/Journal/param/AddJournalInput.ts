@@ -1,9 +1,9 @@
 import { Field, InputType } from "type-graphql";
 
-import { Summary } from "../../../entity";
+import { Journal } from "../../../entity";
 
 @InputType()
-export class AddSummaryInput implements Partial<Summary> {
+export class AddJournalInput implements Partial<Journal> {
   @Field()
   date!: Date
 

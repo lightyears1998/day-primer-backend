@@ -7,10 +7,10 @@ import {
 
 @ObjectType()
 @Entity()
-export class Summary {
+export class Journal {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
-  summaryId!: number
+  journalId!: number
 
   @Field()
   @Column()
