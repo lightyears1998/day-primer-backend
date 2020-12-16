@@ -1,2 +1,2 @@
-export * from "./param";
+export * from "./types";
 export * from "./ActionResolver";

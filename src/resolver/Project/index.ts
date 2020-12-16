@@ -1,3 +1,3 @@
-export * from "./param";
+export * from "./types";
 export * from "./ProjectResolver";
 export * from "./ProjectGuard";

@@ -10,9 +10,8 @@ import { ActionRepository } from "../../repo";
 import { Project } from "../../entity";
 import { ContextProjectAccessible, LoadProjectIntoContext } from "../Project";
 
-import { AddActionInput } from "./param";
+import { AddActionInput, UpdateActionInput } from "./types";
 import { ContextActionAccessible, LoadActionIntoContext } from "./ActionGuard";
-import { UpdateActionInput } from "./param/UpdateActionInput";
 
 @Service()
 @Resolver(() => Action)

@@ -4,14 +4,15 @@ import {
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import { Action, User } from "../../entity";
+import {
+  Action, User, Project
+} from "../../entity";
 import { AppUserContext } from "../../context";
-import { Project } from "../../entity/Project";
 import { ProjectRepository } from "../../repo/ProjectRepository";
 
-import { AddProjectInput } from "./param/AddProjectInput";
+import { AddProjectInput } from "./types";
 import { ContextProjectAccessible, LoadProjectIntoContext } from "./ProjectGuard";
-import { UpdateProjectInput } from "./param/UpdateProjectInput";
+import { UpdateProjectInput } from "./types";
 
 @Service()
 @Resolver(() => Project)

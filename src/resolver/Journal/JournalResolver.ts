@@ -7,31 +7,38 @@ import {
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { Journal } from "../../entity";
-import { JournalRepository } from "../../repo/JournalRepository";
+import { JournalRepository } from "../../repo";
 
-import { AddJournalInput } from "./param";
+import { AddJournalInput } from "./types";
 
 @Resolver(() => Journal)
 export class JournalResolver {
   @InjectRepository()
-  private readonly summaryRepository!: JournalRepository
+  private readonly journalRepository!: JournalRepository
 
   @Authorized()
   @Query(() => [Journal])
-  async summariesOfToday(): Promise<Journal[]> {
-    return this.summaryRepository.findByDay(new Date());
+  async journals(): Promise<Journal[]> {
+    return [];
+  }
+
+  @Authorized()
+  @Query(() => [Journal])
+  async journalsOfToday(): Promise<Journal[]> {
+    return this.journalRepository.findByDate(new Date());
   }
 
   @Authorized()
   @Query(() => [Journal], { nullable: true })
-  async summariesOf(@Arg("day") day: Date): Promise<Journal[]> {
-    return this.summaryRepository.findByDay(new Date(day));
+  async journalsOf(@Arg("date") date: Date): Promise<Journal[]> {
+    return this.journalRepository.findByDate(new Date(date));
   }
 
+  @Authorized()
   @Mutation(() => Journal)
-  async addSummary(@Arg("data") data: AddJournalInput): Promise<Journal> {
-    const summary = this.summaryRepository.create();
-    Object.assign(summary, data);
-    return this.summaryRepository.save(summary);
+  async addJournal(@Arg("data") data: AddJournalInput): Promise<Journal> {
+    const journal = this.journalRepository.create();
+    Object.assign(journal, data);
+    return this.journalRepository.save(journal);
   }
 }
