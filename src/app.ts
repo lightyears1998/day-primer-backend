@@ -24,11 +24,12 @@ import { authChecker } from "./auth/AuthChecker";
 import { appUserContextMiddleware } from "./auth/AppUserContextMiddleware";
 import { setupUserContext } from "./context";
 
-async function setupDatabase(): Promise<void> {
-  const dbPath = path.join(APP_VAR_DIR, "./database.sqlite3");
-  await fs.ensureDir(path.dirname(dbPath));
-  console.log("💾 Using sqlite database: " + dbPath);
+async function setupEnvironment() {
+  await fs.ensureDir(APP_VAR_DIR);
+  console.log("💾 Application variable path: " + APP_VAR_DIR);
+}
 
+async function setupDatabase(): Promise<void> {
   useContainer(Container);
 
   await createConnection({
@@ -111,6 +112,7 @@ async function setupKoa(server: ApolloServer): Promise<Koa> {
 }
 
 async function bootstrap() {
+  await setupEnvironment();
   await setupDatabase();
   const schema = await setupGraphQLSchema();
   const server = await setupApolloServer(schema);
