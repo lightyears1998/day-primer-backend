@@ -17,7 +17,7 @@ import {
 } from "graphql-query-complexity";
 
 import {
-  APP_VAR_DIR, APP_HOST, APP_PORT, APP_SECRET, QUERY_COMPLEXITY_LIMIT, APP_PROXY
+  APP_VAR_DIR, APP_HOST, APP_PORT, APP_SECRET, QUERY_COMPLEXITY_LIMIT, APP_PROXY, PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD
 } from "./config";
 import { genSecret, redis } from "./utils";
 import { authChecker } from "./auth/AuthChecker";
@@ -32,8 +32,11 @@ async function setupDatabase(): Promise<void> {
   useContainer(Container);
 
   await createConnection({
-    type: "better-sqlite3",
-    database: dbPath,
+    type: "postgres",
+    host: PG_HOST,
+    port: PG_PORT,
+    username: PG_USERNAME,
+    password: PG_PASSWORD,
     synchronize: true,
     logging: "all",
     entities: [`${__dirname}/entity/**/*.{ts,js}`]

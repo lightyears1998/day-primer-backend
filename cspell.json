@@ -5,9 +5,13 @@
         "airbnb",
         "dbaeumer",
         "esnext",
+        "postgres",
         "qfstudio",
         "tslib",
         "typedi",
         "typeorm"
+    ],
+    "ignorePaths": [
+        "config/local.yml"
     ]
 }

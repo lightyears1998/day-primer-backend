@@ -28,3 +28,9 @@ export const QUERY_COMPLEXITY_LIMIT = getConfig("query.complexity-limit", 65535)
 export const REDIS_HOST = getConfig("redis.host", "localhost");
 export const REDIS_PORT = getConfig("redis.port", 6379);
 export const REDIS_PASSWORD = getConfig("redis.password", "");
+
+// Database
+export const PG_HOST = getConfig("postgresql.host", "localhost");
+export const PG_PORT = getConfig("postgresql.port", 5432);
+export const PG_USERNAME = getConfig("postgresql.username", "dayprimer");
+export const PG_PASSWORD = getConfig("postgresql.password", "pa$$w0rd");
