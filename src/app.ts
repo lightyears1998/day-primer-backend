@@ -17,7 +17,7 @@ import {
 } from "graphql-query-complexity";
 
 import {
-  APP_VAR_DIR, APP_HOST, APP_PORT, APP_SECRET, QUERY_COMPLEXITY_LIMIT, APP_PROXY, PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD
+  APP_VAR_DIR, APP_HOST, APP_PORT, APP_SECRET, QUERY_COMPLEXITY_LIMIT, APP_PROXY, PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD, PG_DATABASE
 } from "./config";
 import { genSecret, redis } from "./utils";
 import { authChecker } from "./auth/AuthChecker";
@@ -37,6 +37,7 @@ async function setupDatabase(): Promise<void> {
     port: PG_PORT,
     username: PG_USERNAME,
     password: PG_PASSWORD,
+    database: PG_DATABASE,
     synchronize: true,
     logging: "all",
     entities: [`${__dirname}/entity/**/*.{ts,js}`]

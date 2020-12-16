@@ -34,3 +34,4 @@ export const PG_HOST = getConfig("postgresql.host", "localhost");
 export const PG_PORT = getConfig("postgresql.port", 5432);
 export const PG_USERNAME = getConfig("postgresql.username", "dayprimer");
 export const PG_PASSWORD = getConfig("postgresql.password", "pa$$w0rd");
+export const PG_DATABASE = getConfig("postgresql.database", "dayprimer");

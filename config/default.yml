@@ -21,3 +21,4 @@ postgresql:
   port: 5432
   username: dayprimer
   password: pa$$w0rd
+  database: dayprimer
