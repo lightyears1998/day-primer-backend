@@ -9,10 +9,10 @@ import {
 } from "../../entity";
 import { AppUserContext } from "../../context";
 import { ProjectRepository } from "../../repo/ProjectRepository";
+import { AddProjectInput } from "../../types/Project";
+import { UpdateProjectInput } from "../../types/Project";
 
-import { AddProjectInput } from "./types";
 import { ContextProjectAccessible, LoadProjectIntoContext } from "./ProjectGuard";
-import { UpdateProjectInput } from "./types";
 
 @Service()
 @Resolver(() => Project)

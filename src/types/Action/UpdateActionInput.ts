@@ -1,14 +1,17 @@
 import { Field, InputType } from "type-graphql";
 
-import { Action } from "../../../entity";
+import { Action } from "../../entity";
 
 @InputType()
-export class AddActionInput implements Partial<Action> {
-  @Field()
-  name!: string
+export class UpdateActionInput implements Partial<Action> {
+  @Field({ nullable: true })
+  name?: string
 
-  @Field({ nullable: true, defaultValue: "" })
-  description!: string
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  isDone?: boolean
 
   @Field({ nullable: true })
   plannedStart?: Date

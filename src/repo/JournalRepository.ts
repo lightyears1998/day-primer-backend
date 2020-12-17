@@ -4,11 +4,18 @@ import {
 } from "typeorm";
 import moment from "moment";
 
-import { Journal } from "../entity";
+import { Journal, User } from "../entity";
 
 @Service()
 @EntityRepository(Journal)
 export class JournalRepository extends Repository<Journal> {
+  async loadOwner(journal: Journal): Promise<User> {
+    if (!journal.owner) {
+      journal.owner = await this.createQueryBuilder().relation(Journal, "owner").of(journal).loadOne() as User;
+    }
+    return journal.owner;
+  }
+
   async findByDate(date: Date): Promise<Journal[]> {
     const start = moment(date).startOf("day").toDate();
     const end = moment(date).endOf("day").toDate();

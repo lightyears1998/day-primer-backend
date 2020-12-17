@@ -9,8 +9,8 @@ import { AppUserContext } from "../../context";
 import { ActionRepository } from "../../repo";
 import { Project } from "../../entity";
 import { ContextProjectAccessible, LoadProjectIntoContext } from "../Project";
+import { AddActionInput, UpdateActionInput } from "../../types/Action";
 
-import { AddActionInput, UpdateActionInput } from "./types";
 import { ContextActionAccessible, LoadActionIntoContext } from "./ActionGuard";
 
 @Service()

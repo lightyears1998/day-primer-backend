@@ -2,8 +2,10 @@ import {
   Field, ID, ObjectType
 } from "type-graphql";
 import {
-  Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn
+  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm";
+
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -11,6 +13,10 @@ export class Journal {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
   journalId!: number
+
+  @Field(() => User)
+  @ManyToOne(() => User, user => user.journals)
+  owner?: User
 
   @Field()
   @Column()

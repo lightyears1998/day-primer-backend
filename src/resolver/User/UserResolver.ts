@@ -10,8 +10,7 @@ import { AppContext, AppUserContext } from "../../context";
 import { UserRepository } from "../../repo";
 import { Project } from "../../entity/Project";
 import { UserService } from "../../service";
-
-import { QueryUsersResult } from "./types";
+import { QueryUsersResult } from "../../types/User";
 
 @Service()
 @Resolver(() => User)
@@ -23,7 +22,11 @@ export class UserResolver implements ResolverInterface<User> {
   private readonly userService!: UserService
 
   @FieldResolver(() => [Project])
-  async projects(@Root() user: User): Promise<Project[]> {
+  async projects(
+    @Root() user: User,
+    @Arg("skip", { nullable: true }) skip: number,
+    @Arg("take", { nullable: true }) take: number
+  ): Promise<Project[]> {
     if (!user.projects) {
       user.projects = await this.userRepository.loadProjects(user);
     }
@@ -70,7 +73,7 @@ export class UserResolver implements ResolverInterface<User> {
   }
 
   @Authorized()
-  @Query(() => [QueryUsersResult], {
+  @Query(() => QueryUsersResult, {
     complexity: ({ args, childComplexity }) => {
       return 1 + childComplexity * (args.take ?? 0);
     }

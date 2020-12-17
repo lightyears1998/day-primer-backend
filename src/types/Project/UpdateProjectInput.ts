@@ -1,6 +1,6 @@
 import { Field, InputType } from "type-graphql";
 
-import { Project } from "../../../entity";
+import { Project } from "../../entity";
 
 @InputType()
 export class UpdateProjectInput implements Partial<Project> {
