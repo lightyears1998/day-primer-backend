@@ -12,7 +12,7 @@ import { User } from "./User";
 export class Journal {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
-  journalId!: number
+  journalId!: string
 
   @Field(() => User)
   @ManyToOne(() => User, user => user.journals)

@@ -23,9 +23,7 @@ export class UserResolver implements ResolverInterface<User> {
 
   @FieldResolver(() => [Project])
   async projects(
-    @Root() user: User,
-    @Arg("skip", { nullable: true }) skip: number,
-    @Arg("take", { nullable: true }) take: number
+    @Root() user: User
   ): Promise<Project[]> {
     if (!user.projects) {
       user.projects = await this.userRepository.loadProjects(user);
