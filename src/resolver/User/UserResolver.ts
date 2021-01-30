@@ -38,7 +38,7 @@ export class UserResolver implements ResolverInterface<User> {
   }
 
   @Query(() => Boolean)
-  async existUsername(username: string): Promise<boolean> {
+  async existUsername(@Arg("username") username: string): Promise<boolean> {
     return (await this.userRepository.findByUsername(username)) !== undefined;
   }
 
