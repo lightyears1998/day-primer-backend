@@ -7,6 +7,7 @@ app:
   secret: null
   session:
     key: moment
+  authorization-code: ""
 
 query:
   complexity-limit: 65535

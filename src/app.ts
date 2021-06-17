@@ -1,6 +1,7 @@
 import path from "path";
 
 import Koa from "koa";
+import { koa as voyagerMiddleware } from "graphql-voyager/middleware";
 import { ApolloServer } from "apollo-server-koa";
 import { buildSchema } from "type-graphql";
 import { GraphQLSchema, printSchema } from "graphql";
@@ -15,23 +16,29 @@ import redisStore from "koa-redis";
 import {
   fieldExtensionsEstimator, getComplexity, simpleEstimator
 } from "graphql-query-complexity";
+import Router from "koa-router";
 
 import {
-  APP_VAR_DIR, APP_HOST, APP_PORT, APP_SECRET, QUERY_COMPLEXITY_LIMIT, APP_PROXY, PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD, PG_DATABASE
+  APP_VAR_DIR, APP_HOST, APP_PORT, APP_SECRET, APP_AUTHORIZATION_CODE,
+  QUERY_COMPLEXITY_LIMIT, APP_PROXY,
+  PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD, PG_DATABASE
 } from "./config";
 import { genSecret, redis } from "./utils";
-import { authChecker } from "./auth/AuthChecker";
-import { appUserContextMiddleware } from "./auth/AppUserContextMiddleware";
+import { authChecker } from "./ctx/AuthChecker";
+import { appUserContextMiddleware } from "./ctx/AppUserContextMiddleware";
 import { setupUserContext } from "./context";
 
 async function setupEnvironment() {
+  // 依赖注入
+  useContainer(Container);
+  Container.set("authorization-code", APP_AUTHORIZATION_CODE);
+
+  // 文件系统
   await fs.ensureDir(APP_VAR_DIR);
   console.log("💾 Application variable path: " + APP_VAR_DIR);
 }
 
 async function setupDatabase(): Promise<void> {
-  useContainer(Container);
-
   await createConnection({
     type: "postgres",
     host: PG_HOST,
@@ -39,7 +46,7 @@ async function setupDatabase(): Promise<void> {
     username: PG_USERNAME,
     password: PG_PASSWORD,
     database: PG_DATABASE,
-    synchronize: true,
+    synchronize: false,
     logging: "all",
     entities: [`${__dirname}/entity/**/*.{ts,js}`]
   });
@@ -51,9 +58,10 @@ async function setupGraphQLSchema(): Promise<GraphQLSchema> {
     container: Container,
     authChecker: authChecker
   });
-  const schemaPath = path.join(APP_VAR_DIR, "./schema.graphql");
-  await fs.writeFile(schemaPath, printSchema(schema));
-  console.log("📁 Schema prints to: " + schemaPath);
+
+  Container.set("graphql-schema", schema);
+  Container.set("graphql-schema-sdl", printSchema(schema));
+  console.log("📁 Graphql Schema is ready.");
 
   return schema;
 }
@@ -108,7 +116,27 @@ async function setupKoa(server: ApolloServer): Promise<Koa> {
 
   setupUserContext(app);
 
+  const router = setupRouter();
+  app.use(router.routes());
+  app.use(router.allowedMethods());
+
   return app;
+}
+
+function setupRouter(): Router {
+  const router = new Router();
+
+  router.get("/graphql/schema.sdl", async (ctx, next) => {
+    ctx.body = Container.get("graphql-schema-sdl");
+    return next();
+  });
+
+  router.all(
+    "/voyager",
+    voyagerMiddleware({ endpointUrl: "/graphql" }),
+  );
+
+  return router;
 }
 
 async function bootstrap() {

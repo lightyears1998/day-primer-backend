@@ -21,6 +21,8 @@ export const APP_HOST = getConfig("app.host", "localhost");
 export const APP_PORT = getConfig("app.port", 4000);
 export const APP_PROXY = getConfig("app.proxy", false);
 
+export const APP_AUTHORIZATION_CODE = getConfig("app.authorization-code", "");
+
 // Query Limit
 export const QUERY_COMPLEXITY_LIMIT = getConfig("query.complexity-limit", 65535);
 

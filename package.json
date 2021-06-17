@@ -29,6 +29,7 @@
     "fs-extra": "^9.0.1",
     "graphql": "^15.3.0",
     "graphql-query-complexity": "^0.7.0",
+    "graphql-voyager": "^1.0.0-rc.31",
     "ioredis": "^4.19.1",
     "koa": "^2.13.0",
     "koa-compress": "^5.0.1",
