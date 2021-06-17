@@ -6,7 +6,7 @@ import { InjectManager } from "typeorm-typedi-extensions";
 
 import { Journal, User } from "../entity";
 import { Project } from "../entity/Project";
-import { PaginationArgs } from "../types/PaginationArgs";
+import { PaginationArgs } from "../resolver/Pagination/PaginationArgs";
 
 @Service()
 @EntityRepository(User)

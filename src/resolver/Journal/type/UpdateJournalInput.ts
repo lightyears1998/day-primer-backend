@@ -1,6 +1,6 @@
 import { Field, InputType } from "type-graphql";
 
-import { Journal } from "../../entity";
+import { Journal } from "../../../entity";
 
 @InputType()
 export class UpdateJournalInput implements Partial<Journal> {

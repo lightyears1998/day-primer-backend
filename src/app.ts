@@ -1,5 +1,3 @@
-import path from "path";
-
 import Koa from "koa";
 import { koa as voyagerMiddleware } from "graphql-voyager/middleware";
 import { ApolloServer } from "apollo-server-koa";
@@ -24,8 +22,8 @@ import {
   PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD, PG_DATABASE
 } from "./config";
 import { genSecret, redis } from "./utils";
-import { authChecker } from "./ctx/AuthChecker";
-import { appUserContextMiddleware } from "./ctx/AppUserContextMiddleware";
+import { authChecker } from "./context/AuthChecker";
+import { appUserContextMiddleware } from "./context/AppUserContextMiddleware";
 import { setupUserContext } from "./context";
 
 async function setupEnvironment() {

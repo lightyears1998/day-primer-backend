@@ -13,7 +13,7 @@ import { Journal } from "./Journal";
 @Unique("UNIQUE_username", ["username"])
 export class User {
   @Field(() => ID)
-  @PrimaryGeneratedColumn("increment")
+  @PrimaryGeneratedColumn("uuid")
   userId!: number
 
   @Field()

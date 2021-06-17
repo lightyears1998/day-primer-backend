@@ -39,6 +39,12 @@
 }
 ```
 
+## 设计风格
+
+DDD = Domain-Driven Design
+
+1. 尽管直接操作 DO 不是最佳实践；但是项目的复杂度不高，不需要细致地分层。
+
 ## 编程风格
 
 以下规则大部分改编自[graphql-rules.com](https://graphql-rules.com)。
@@ -54,7 +60,7 @@ type Query {
 }
 
 input ArticleFilter {
-  lang: Stirng
+  lang: String
   userId: Int
   rating: MinMaxInput
 }

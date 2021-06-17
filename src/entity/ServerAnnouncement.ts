@@ -5,7 +5,7 @@ import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm";
 
-import { User } from "../User";
+import { User } from "./User";
 
 @Entity()
 @ObjectType()

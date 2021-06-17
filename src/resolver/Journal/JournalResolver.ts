@@ -4,21 +4,19 @@ import {
   Ctx,
   ID,
   Mutation,
-  Query, Resolver, UseMiddleware
+  Query,
+  Resolver
 } from "type-graphql";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { Journal, User } from "../../entity";
 import { JournalRepository, UserRepository } from "../../repo";
-import {
-  AddJournalInput, PaginatedJournalResponse, UpdateJournalInput
-} from "../../types";
-import { defaultPaginationArgs, PaginationArgs } from "../../types";
+import { defaultPaginationArgs, PaginationArgs } from "../Pagination";
 import { AppUserContext } from "../../context";
 
-import { ContextJournalAccessible } from "./JournalGuard";
-
-import { LoadJournalIntoContext } from ".";
+import {
+  AddJournalInput, PaginatedJournalResponse, UpdateJournalInput
+} from "./type";
 
 @Resolver(() => Journal)
 export class JournalResolver {
@@ -62,10 +60,6 @@ export class JournalResolver {
   }
 
   @Authorized()
-  @UseMiddleware(
-    LoadJournalIntoContext({ argKey: "journalId", ctxKey: "journal" }),
-    ContextJournalAccessible({ ctxKey: "journal" })
-  )
   @Mutation(() => Journal)
   async updateJournal(@Ctx() ctx: AppUserContext, @Arg("journalId") _journalId: string, @Arg("data") data: UpdateJournalInput): Promise<Journal> {
     const journal = ctx.state.journal as Journal;
@@ -74,10 +68,6 @@ export class JournalResolver {
   }
 
   @Authorized()
-  @UseMiddleware(
-    LoadJournalIntoContext({ argKey: "journalId", ctxKey: "journal" }),
-    ContextJournalAccessible({ ctxKey: "journal" })
-  )
   @Mutation(() => ID, { nullable: true })
   async removeJournal(@Ctx() ctx: AppUserContext, @Arg("journalId", () => ID) _journalId: string): Promise<string> {
     const journal = ctx.state.journal as Journal;

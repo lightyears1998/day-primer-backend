@@ -10,7 +10,8 @@ import { AppContext, AppUserContext } from "../../context";
 import { UserRepository } from "../../repo";
 import { Project } from "../../entity/Project";
 import { UserService } from "../../service";
-import { QueryUsersResult } from "../../types/User";
+
+import { QueryUsersResult } from "./type";
 
 @Service()
 @Resolver(() => User)
