@@ -1,8 +1,8 @@
 {
-  "name": "@lightyears1998/day-primer-backend",
+  "name": "@lightyears1998/day-primer-server",
   "version": "0.0.0",
   "main": "lib/index.js",
-  "license": "MIT",
+  "license": "MulanPSL-2.0",
   "scripts": {
     "start": "node lib/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
