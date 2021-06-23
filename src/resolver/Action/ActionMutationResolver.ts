@@ -1,5 +1,5 @@
 import {
-  Arg, Authorized, Ctx, FieldResolver, ID
+  Arg, Authorized, Ctx, FieldResolver, ID, Resolver
 } from "type-graphql";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
@@ -11,6 +11,7 @@ import {
   ActionMutation, AddActionInput, UpdateActionInput
 } from "./type";
 
+@Resolver(() => ActionMutation)
 export class ActionMutationResolver {
   @InjectRepository()
   private readonly actionRepository!: ActionRepository

@@ -49,30 +49,4 @@ export class JournalResolver {
   async journalsOf(@Arg("date") date: Date): Promise<Journal[]> {
     return this.journalRepository.findByDate(new Date(date));
   }
-
-  @Authorized()
-  @Mutation(() => Journal)
-  async addJournal(@Ctx() ctx: AppUserContext, @Arg("data") data: AddJournalInput): Promise<Journal> {
-    const user = ctx.getSessionUser() as User;
-    const journal = this.journalRepository.create({ owner: user });
-    Object.assign(journal, data);
-    return this.journalRepository.save(journal);
-  }
-
-  @Authorized()
-  @Mutation(() => Journal)
-  async updateJournal(@Ctx() ctx: AppUserContext, @Arg("journalId") _journalId: string, @Arg("data") data: UpdateJournalInput): Promise<Journal> {
-    const journal = ctx.state.journal as Journal;
-    Object.assign(journal, data);
-    return this.journalRepository.save(journal);
-  }
-
-  @Authorized()
-  @Mutation(() => ID, { nullable: true })
-  async removeJournal(@Ctx() ctx: AppUserContext, @Arg("journalId", () => ID) _journalId: string): Promise<string> {
-    const journal = ctx.state.journal as Journal;
-    const journalId = journal.journalId;
-    await this.journalRepository.remove(journal);
-    return journalId;
-  }
 }

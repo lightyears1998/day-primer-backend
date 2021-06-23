@@ -43,34 +43,6 @@ export class UserResolver implements ResolverInterface<User> {
     return (await this.userRepository.findByUsername(username)) !== undefined;
   }
 
-  @Mutation(() => User)
-  async signUp(
-    @Arg("username") username: string,
-    @Arg("password") password: string
-  ): Promise<User> {
-    return this.userService.registerUser(username, password);
-  }
-
-  @Mutation(() => User, { nullable: true })
-  async signIn(@Arg("username") username: string, @Arg("password") password: string, @Ctx() ctx: AppContext): Promise<User | null> {
-    const user = await this.userRepository.findOneOrFail({ username });
-
-    if (!(await this.userService.matchPassword(user, password))) {
-      throw new ApolloError("用户名或密码错误。", "WRONG_USERNAME_OR_PASSWORD");
-    }
-
-    if (ctx.session) {
-      ctx.session.userId = user.userId;
-    }
-    return user;
-  }
-
-  @Mutation(() => Boolean)
-  async signOut(@Ctx() ctx: AppContext): Promise<boolean> {
-    ctx.session = null;
-    return true;
-  }
-
   @Authorized()
   @Query(() => QueryUsersResult, {
     complexity: ({ args, childComplexity }) => {
@@ -88,21 +60,5 @@ export class UserResolver implements ResolverInterface<User> {
     return {
       users, total, hasMore
     };
-  }
-
-  @Authorized()
-  @Mutation(() => Boolean)
-  async updatePassword(
-    @Ctx() ctx: AppUserContext,
-    @Arg("newPassword") newPassword: string,
-    @Arg("oldPassword") oldPassword: string
-  ): Promise<boolean> {
-    const user = ctx.getSessionUser() as User;
-    if (!(await this.userService.matchPassword(user, oldPassword))) {
-      throw new ApolloError("旧密码错误。");
-    }
-
-    await this.userService.updatePassword(user, newPassword);
-    return true;
   }
 }
